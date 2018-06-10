@@ -102,7 +102,9 @@ Team* PriorityQueue::pop()
 	{
 		cursor = cursor->next;
 
-		if (cursor->team->getDiff() < minDiffTeamNode->team->getDiff())
+		if (cursor->team->getDiff() < minDiffTeamNode->team->getDiff()
+			|| (cursor->team->getDiff() == minDiffTeamNode->team->getDiff()
+				&& cursor->team->getCountOfBalloons() < minDiffTeamNode->team->getCountOfBalloons()))
 		{
 			minDiffTeamNode = cursor;
 		}
