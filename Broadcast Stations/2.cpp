@@ -80,6 +80,25 @@ int pickMaxEffectVertice()
   return maxEffectVertice;
 }
 
+void downEffect(int wave, int waveParent, int distance)
+{
+  if (powerOfVertices[wave] + 1 >= distance)
+  {
+    effectOfVertices[wave] --;
+  }
+
+  AdjacencyNode * adjacencyNode = adjacencies[wave].next;
+  while (adjacencyNode != NULL)
+  {
+    if (adjacencyNode->adjacency != waveParent)
+    {
+      downEffect(adjacencyNode->adjacency, wave, distance + 1);
+    }
+
+    adjacencyNode = adjacencyNode->next;
+  }
+}
+
 void coverVertice(int vertice)
 {
   if (isVerticeCovered[vertice]) return;
@@ -87,15 +106,7 @@ void coverVertice(int vertice)
   isVerticeCovered[vertice] = true;
 
   // update effect of vertices
-  effectOfVertices[vertice] --;
-
-  AdjacencyNode * adjacencyNode = adjacencies[vertice].next;
-  while (adjacencyNode != NULL)
-  {
-    effectOfVertices[adjacencyNode->adjacency] --;
-
-    adjacencyNode = adjacencyNode->next;
-  }
+  downEffect(vertice, -1, 0);
 }
 
 // return sum of additional effect
@@ -128,12 +139,12 @@ int main()
 {
   input();
 
-  // debug
-  for (int i=1; i<=countOfVertices; i++)
-  {
-    cout << effectOfVertices[i] << ' ';
-  }
-  cout << endl;
+  // // debug
+  // for (int i=1; i<=countOfVertices; i++)
+  // {
+  //   cout << effectOfVertices[i] << ' ';
+  // }
+  // cout << endl;
 
   while (true)
   {
@@ -146,14 +157,24 @@ int main()
     powerOfVertices[maxEffectVertice] ++;
 
     coverVertice(maxEffectVertice);
+
+    // // debug
+    // cout << "after cover station: \t\t\t";
+    // for (int i=1; i<=countOfVertices; i++)
+    // {
+    //   cout << effectOfVertices[i] << ' ';
+    // }
+    // cout << endl;
+
     effectOfVertices[maxEffectVertice] += coverAdjacenciesWithPower(maxEffectVertice, powerOfVertices[maxEffectVertice], -1);
 
-    // debug
-    for (int i=1; i<=countOfVertices; i++)
-    {
-      cout << effectOfVertices[i] << ' ';
-    }
-    cout << endl;
+    // // debug
+    // cout << "after cover adjacencies with power: \t";
+    // for (int i=1; i<=countOfVertices; i++)
+    // {
+    //   cout << effectOfVertices[i] << ' ';
+    // }
+    // cout << endl;
   }
 
   cout << minSumOfPowers << endl;
